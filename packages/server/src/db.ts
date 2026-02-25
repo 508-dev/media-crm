@@ -1,13 +1,18 @@
-import Database, { type Database as DatabaseType } from "better-sqlite3";
+import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import { eq, desc, and, sql } from "drizzle-orm";
 import path from "path";
 import { fileURLToPath } from "url";
+import { media, type NewMedia } from "./schema";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dbPath = process.env.DB_PATH || path.join(__dirname, "..", "media.db");
 
-export const db: DatabaseType = new Database(dbPath);
+const sqlite = new Database(dbPath);
+export const db = drizzle(sqlite);
 
-db.exec(`
+// Create table if not exists (Drizzle doesn't auto-migrate)
+sqlite.exec(`
   CREATE TABLE IF NOT EXISTS media (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -15,109 +20,56 @@ db.exec(`
     status TEXT NOT NULL,
     rating REAL,
     notes TEXT,
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
   )
 `);
 
 export function getAllMedia(filters?: { type?: string; status?: string }) {
-  let query = "SELECT * FROM media";
-  const conditions: string[] = [];
-  const params: string[] = [];
+  const conditions = [];
 
   if (filters?.type) {
-    conditions.push("type = ?");
-    params.push(filters.type);
+    conditions.push(eq(media.type, filters.type as typeof media.type.enumValues[number]));
   }
   if (filters?.status) {
-    conditions.push("status = ?");
-    params.push(filters.status);
+    conditions.push(eq(media.status, filters.status as typeof media.status.enumValues[number]));
   }
 
   if (conditions.length > 0) {
-    query += " WHERE " + conditions.join(" AND ");
+    return db
+      .select()
+      .from(media)
+      .where(and(...conditions))
+      .orderBy(desc(media.updatedAt))
+      .all();
   }
 
-  query += " ORDER BY updated_at DESC";
-
-  return db.prepare(query).all(...params);
+  return db.select().from(media).orderBy(desc(media.updatedAt)).all();
 }
 
 export function getMediaById(id: number) {
-  return db.prepare("SELECT * FROM media WHERE id = ?").get(id);
+  return db.select().from(media).where(eq(media.id, id)).get();
 }
 
-export function createMedia(data: {
-  title: string;
-  type: string;
-  status: string;
-  rating?: number | null;
-  notes?: string;
-}) {
-  const stmt = db.prepare(`
-    INSERT INTO media (title, type, status, rating, notes)
-    VALUES (?, ?, ?, ?, ?)
-  `);
-  const result = stmt.run(
-    data.title,
-    data.type,
-    data.status,
-    data.rating ?? null,
-    data.notes ?? null
-  );
-  return getMediaById(result.lastInsertRowid as number);
+export function createMedia(data: NewMedia) {
+  return db.insert(media).values(data).returning().get();
 }
 
 export function updateMedia(
   id: number,
-  data: {
-    title?: string;
-    type?: string;
-    status?: string;
-    rating?: number | null;
-    notes?: string;
-  }
+  data: Partial<Omit<NewMedia, "id">>
 ) {
-  const fields: string[] = [];
-  const values: (string | number | null)[] = [];
+  const existing = getMediaById(id);
+  if (!existing) return undefined;
 
-  if (data.title !== undefined) {
-    fields.push("title = ?");
-    values.push(data.title);
-  }
-  if (data.type !== undefined) {
-    fields.push("type = ?");
-    values.push(data.type);
-  }
-  if (data.status !== undefined) {
-    fields.push("status = ?");
-    values.push(data.status);
-  }
-  if (data.rating !== undefined) {
-    fields.push("rating = ?");
-    values.push(data.rating);
-  }
-  if (data.notes !== undefined) {
-    fields.push("notes = ?");
-    values.push(data.notes);
-  }
-
-  if (fields.length === 0) {
-    return getMediaById(id);
-  }
-
-  fields.push("updated_at = datetime('now')");
-  values.push(id);
-
-  db.prepare(`UPDATE media SET ${fields.join(", ")} WHERE id = ?`).run(
-    ...values
-  );
-
-  return getMediaById(id);
+  return db
+    .update(media)
+    .set({ ...data, updatedAt: sql`datetime('now')` })
+    .where(eq(media.id, id))
+    .returning()
+    .get();
 }
 
 export function deleteMedia(id: number) {
-  const item = getMediaById(id);
-  db.prepare("DELETE FROM media WHERE id = ?").run(id);
-  return item;
+  return db.delete(media).where(eq(media.id, id)).returning().get();
 }

@@ -4,7 +4,7 @@ import {
   MediaItemCreate,
   MediaItemUpdate,
   MediaListFilter,
-  MediaItem,
+  type MediaItem,
 } from "@media-crm/shared";
 import {
   getAllMedia,
@@ -13,34 +13,25 @@ import {
   updateMedia,
   deleteMedia,
 } from "../db";
+import type { Media } from "../schema";
 
-function toMediaItem(row: unknown): MediaItem {
-  const r = row as {
-    id: number;
-    title: string;
-    type: string;
-    status: string;
-    rating: number | null;
-    notes: string | null;
-    created_at: string;
-    updated_at: string;
-  };
+function toMediaItem(row: Media): MediaItem {
   return {
-    id: r.id,
-    title: r.title,
-    type: r.type as MediaItem["type"],
-    status: r.status as MediaItem["status"],
-    rating: r.rating,
-    notes: r.notes ?? undefined,
-    createdAt: r.created_at,
-    updatedAt: r.updated_at,
+    id: row.id,
+    title: row.title,
+    type: row.type,
+    status: row.status,
+    rating: row.rating,
+    notes: row.notes ?? undefined,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
   };
 }
 
 export const mediaRouter = router({
   list: publicProcedure.input(MediaListFilter.optional()).query(({ input }) => {
     const rows = getAllMedia(input);
-    return (rows as unknown[]).map(toMediaItem);
+    return rows.map(toMediaItem);
   }),
 
   getById: publicProcedure.input(z.number()).query(({ input }) => {
@@ -59,11 +50,10 @@ export const mediaRouter = router({
   update: publicProcedure
     .input(z.object({ id: z.number(), data: MediaItemUpdate }))
     .mutation(({ input }) => {
-      const existing = getMediaById(input.id);
-      if (!existing) {
+      const row = updateMedia(input.id, input.data);
+      if (!row) {
         throw new Error("Media item not found");
       }
-      const row = updateMedia(input.id, input.data);
       return toMediaItem(row);
     }),
 
