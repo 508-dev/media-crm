@@ -1,5 +1,5 @@
-import { router } from "../trpc.js";
-import { mediaRouter } from "./media.js";
+import { router } from "../trpc";
+import { mediaRouter } from "./media";
 
 export const appRouter = router({
   media: mediaRouter,

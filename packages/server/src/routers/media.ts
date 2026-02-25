@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc.js";
+import { router, publicProcedure } from "../trpc";
 import {
   MediaItemCreate,
   MediaItemUpdate,
@@ -12,7 +12,7 @@ import {
   createMedia,
   updateMedia,
   deleteMedia,
-} from "../db.js";
+} from "../db";
 
 function toMediaItem(row: unknown): MediaItem {
   const r = row as {

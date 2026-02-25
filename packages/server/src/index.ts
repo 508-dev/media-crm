@@ -3,7 +3,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { appRouter } from "./routers/index.js";
+import { appRouter } from "./routers/index";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();

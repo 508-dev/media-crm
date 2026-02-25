@@ -6,9 +6,9 @@ export {
   MediaItemCreate,
   MediaItemUpdate,
   MediaListFilter,
-} from "./schemas/media.js";
+} from "./schemas/media";
 
 export type {
   MediaType as MediaTypeEnum,
   MediaStatus as MediaStatusEnum,
-} from "./schemas/media.js";
+} from "./schemas/media";
