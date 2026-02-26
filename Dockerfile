@@ -38,6 +38,7 @@ COPY packages/client/package.json ./packages/client/
 # Copy built files
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/packages/server/dist ./packages/server/dist
+COPY --from=builder /app/packages/server/drizzle ./packages/server/drizzle
 COPY --from=builder /app/packages/client/dist ./packages/client/dist
 
 # Install production dependencies only

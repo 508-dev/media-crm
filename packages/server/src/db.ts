@@ -1,5 +1,6 @@
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
+import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { eq, desc, and, sql } from "drizzle-orm";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -11,19 +12,8 @@ const dbPath = process.env.DB_PATH || path.join(__dirname, "..", "media.db");
 const sqlite = new Database(dbPath);
 export const db = drizzle(sqlite);
 
-// Create table if not exists (Drizzle doesn't auto-migrate)
-sqlite.exec(`
-  CREATE TABLE IF NOT EXISTS media (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    type TEXT NOT NULL,
-    status TEXT NOT NULL,
-    rating REAL,
-    notes TEXT,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-  )
-`);
+// Run migrations
+migrate(db, { migrationsFolder: path.join(__dirname, "..", "drizzle") });
 
 export function getAllMedia(filters?: { type?: string; status?: string }) {
   const conditions = [];
