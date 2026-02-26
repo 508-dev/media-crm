@@ -1,7 +1,11 @@
+import {
+  MEDIA_STATUSES,
+  MEDIA_TYPES,
+  type MediaItemCreate,
+} from "@media-crm/shared";
 import { useState } from "react";
 import { MediaList } from "./components/MediaList";
 import { trpc } from "./trpc";
-import { MEDIA_TYPES, MEDIA_STATUSES, type MediaItemCreate } from "@media-crm/shared";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -25,7 +29,7 @@ function App() {
         status: "want_to_consume",
         rating: null,
         notes: null,
-    completedAt: null,
+        completedAt: null,
       });
     },
   });
@@ -74,8 +78,14 @@ function App() {
           }}
         >
           <div style={{ marginBottom: 15 }}>
-            <label style={{ display: "block", marginBottom: 5 }}>Title</label>
+            <label
+              htmlFor="title"
+              style={{ display: "block", marginBottom: 5 }}
+            >
+              Title
+            </label>
             <input
+              id="title"
               type="text"
               value={formData.title}
               onChange={(e) =>
@@ -87,8 +97,11 @@ function App() {
           </div>
 
           <div style={{ marginBottom: 15 }}>
-            <label style={{ display: "block", marginBottom: 5 }}>Type</label>
+            <label htmlFor="type" style={{ display: "block", marginBottom: 5 }}>
+              Type
+            </label>
             <select
+              id="type"
               value={formData.type}
               onChange={(e) =>
                 setFormData({
@@ -107,9 +120,15 @@ function App() {
           </div>
 
           <div style={{ marginBottom: 15 }}>
-            <label style={{ display: "block", marginBottom: 5 }}>Status</label>
+            <label
+              htmlFor="status"
+              style={{ display: "block", marginBottom: 5 }}
+            >
+              Status
+            </label>
             <select
               value={formData.status}
+              id="status"
               onChange={(e) =>
                 setFormData({
                   ...formData,
@@ -127,10 +146,14 @@ function App() {
           </div>
 
           <div style={{ marginBottom: 15 }}>
-            <label style={{ display: "block", marginBottom: 5 }}>
+            <label
+              htmlFor="rating"
+              style={{ display: "block", marginBottom: 5 }}
+            >
               Rating (0-10)
             </label>
             <input
+              id="rating"
               type="number"
               min="0"
               max="10"
@@ -139,17 +162,23 @@ function App() {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  rating: e.target.value ? parseFloat(e.target.value) : null,
+                  rating: e.target.value
+                    ? Number.parseFloat(e.target.value)
+                    : null,
                 })
               }
               style={{ width: "100%", padding: 8, fontSize: 16 }}
             />
           </div>
           <div style={{ marginBottom: 15 }}>
-            <label style={{ display: "block", marginBottom: 5 }}>
+            <label
+              htmlFor="completedAt"
+              style={{ display: "block", marginBottom: 5 }}
+            >
               Completed At
             </label>
             <input
+              id="completedAt"
               type="text"
               value={formData.completedAt ?? ""}
               onChange={(e) =>
@@ -163,8 +192,14 @@ function App() {
           </div>
 
           <div style={{ marginBottom: 15 }}>
-            <label style={{ display: "block", marginBottom: 5 }}>Notes</label>
+            <label
+              htmlFor="notes"
+              style={{ display: "block", marginBottom: 5 }}
+            >
+              Notes
+            </label>
             <textarea
+              id="notes"
               value={formData.notes ?? ""}
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value || null })

@@ -1,10 +1,21 @@
 import { z } from "zod";
 
-export const MEDIA_TYPES = ["book", "movie", "tv_show", "game", "podcast"] as const;
+export const MEDIA_TYPES = [
+  "book",
+  "movie",
+  "tv_show",
+  "game",
+  "podcast",
+] as const;
 export const MediaType = z.enum(MEDIA_TYPES);
 export type MediaType = z.infer<typeof MediaType>;
 
-export const MEDIA_STATUSES = ["want_to_consume", "in_progress", "completed", "dropped"] as const;
+export const MEDIA_STATUSES = [
+  "want_to_consume",
+  "in_progress",
+  "completed",
+  "dropped",
+] as const;
 export const MediaStatus = z.enum(MEDIA_STATUSES);
 export type MediaStatus = z.infer<typeof MediaStatus>;
 

@@ -1,8 +1,8 @@
-import express from "express";
-import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
+import cors from "cors";
+import express from "express";
 import { appRouter } from "./routers/index";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -16,7 +16,7 @@ app.use(
   "/trpc",
   createExpressMiddleware({
     router: appRouter,
-  })
+  }),
 );
 
 app.get("/health", (_req, res) => {

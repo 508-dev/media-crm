@@ -1,6 +1,11 @@
+import {
+  MEDIA_STATUSES,
+  MEDIA_TYPES,
+  type MediaItem,
+  type MediaItemUpdate,
+} from "@media-crm/shared";
 import { useState } from "react";
 import { trpc } from "../trpc";
-import { MEDIA_TYPES, MEDIA_STATUSES, type MediaItem, type MediaItemUpdate } from "@media-crm/shared";
 
 export function MediaList() {
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -128,7 +133,7 @@ export function MediaList() {
                     setEditData({
                       ...editData,
                       rating: e.target.value
-                        ? parseFloat(e.target.value)
+                        ? Number.parseFloat(e.target.value)
                         : null,
                     })
                   }
@@ -209,10 +214,9 @@ export function MediaList() {
                     {item.rating !== null && (
                       <span>Rating: {item.rating}/10</span>
                     )}
-                      {item.completedAt !== null && (
-                        <span>Completed on: {item.completedAt}</span>
-                      )}
-
+                    {item.completedAt !== null && (
+                      <span>Completed on: {item.completedAt}</span>
+                    )}
                   </div>
                   {item.notes && (
                     <p style={{ margin: "10px 0 0 0", color: "#555" }}>

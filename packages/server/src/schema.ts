@@ -1,6 +1,6 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { MediaStatus, MediaType } from "@media-crm/shared";
 import { sql } from "drizzle-orm";
-import { MediaType, MediaStatus } from "@media-crm/shared";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // Extract enum values from Zod schemas - single source of truth
 const mediaTypes = MediaType.options;
@@ -13,12 +13,8 @@ export const media = sqliteTable("media", {
   status: text("status", { enum: mediaStatuses }).notNull(),
   rating: real("rating"),
   notes: text("notes"),
-  createdAt: text("createdAt")
-    .notNull()
-    .default(sql`(datetime('now'))`),
-  updatedAt: text("updatedAt")
-    .notNull()
-    .default(sql`(datetime('now'))`),
+  createdAt: text("createdAt").notNull().default(sql`(datetime('now'))`),
+  updatedAt: text("updatedAt").notNull().default(sql`(datetime('now'))`),
   completedAt: text("completedAt"),
 });
 

@@ -1,18 +1,17 @@
-import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
 import {
   MediaItemCreate,
   MediaItemUpdate,
   MediaListFilter,
 } from "@media-crm/shared";
+import { z } from "zod";
 import {
+  createMedia,
+  deleteMedia,
   getAllMedia,
   getMediaById,
-  createMedia,
   updateMedia,
-  deleteMedia,
 } from "../db";
-
+import { publicProcedure, router } from "../trpc";
 
 export const mediaRouter = router({
   list: publicProcedure.input(MediaListFilter.optional()).query(({ input }) => {
