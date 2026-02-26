@@ -4,7 +4,6 @@ import {
   MediaItemCreate,
   MediaItemUpdate,
   MediaListFilter,
-  type MediaItem,
 } from "@media-crm/shared";
 import {
   getAllMedia,
@@ -13,25 +12,12 @@ import {
   updateMedia,
   deleteMedia,
 } from "../db";
-import type { Media } from "../schema";
 
-function toMediaItem(row: Media): MediaItem {
-  return {
-    id: row.id,
-    title: row.title,
-    type: row.type,
-    status: row.status,
-    rating: row.rating,
-    notes: row.notes ?? undefined,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  };
-}
 
 export const mediaRouter = router({
   list: publicProcedure.input(MediaListFilter.optional()).query(({ input }) => {
     const rows = getAllMedia(input);
-    return rows.map(toMediaItem);
+    return rows;
   }),
 
   getById: publicProcedure.input(z.number()).query(({ input }) => {
@@ -39,12 +25,12 @@ export const mediaRouter = router({
     if (!row) {
       throw new Error("Media item not found");
     }
-    return toMediaItem(row);
+    return row;
   }),
 
   create: publicProcedure.input(MediaItemCreate).mutation(({ input }) => {
     const row = createMedia(input);
-    return toMediaItem(row);
+    return row;
   }),
 
   update: publicProcedure
@@ -54,7 +40,7 @@ export const mediaRouter = router({
       if (!row) {
         throw new Error("Media item not found");
       }
-      return toMediaItem(row);
+      return row;
     }),
 
   delete: publicProcedure.input(z.number()).mutation(({ input }) => {
@@ -62,6 +48,6 @@ export const mediaRouter = router({
     if (!row) {
       throw new Error("Media item not found");
     }
-    return toMediaItem(row);
+    return row;
   }),
 });
