@@ -22,10 +22,27 @@ COPY packages/client ./packages/client
 # Build all packages
 RUN pnpm build
 
-# Runtime stage
-FROM node:20-alpine
+# Production dependencies stage
+FROM node:20-alpine AS deps
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Install build dependencies for native modules (bcrypt)
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/server/package.json ./packages/server/
+COPY packages/client/package.json ./packages/client/
+
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile || pnpm install --prod
+
+# Runtime stage
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -35,14 +52,16 @@ COPY packages/shared/package.json ./packages/shared/
 COPY packages/server/package.json ./packages/server/
 COPY packages/client/package.json ./packages/client/
 
+# Copy node_modules with compiled native modules
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=deps /app/packages/server/node_modules ./packages/server/node_modules
+
 # Copy built files
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/packages/server/dist ./packages/server/dist
 COPY --from=builder /app/packages/server/drizzle ./packages/server/drizzle
 COPY --from=builder /app/packages/client/dist ./packages/client/dist
-
-# Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile || pnpm install --prod
 
 # Create data directory for SQLite
 RUN mkdir -p /data

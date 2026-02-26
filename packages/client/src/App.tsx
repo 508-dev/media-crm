@@ -98,6 +98,7 @@ function App() {
             boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
           }}
         >
+          <h3>Warning: This app persists to RAM on the server for now. You will randomly lose this data.</h3>
           <div style={{ marginBottom: 15 }}>
             <label
               htmlFor="title"

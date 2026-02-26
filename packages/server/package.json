@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsup",
     "start": "node dist/index.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -30,6 +30,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.2",
     "drizzle-kit": "^0.24.0",
+    "tsup": "^8.5.1",
     "tsx": "^4.15.6",
     "typescript": "^5.4.5"
   }
