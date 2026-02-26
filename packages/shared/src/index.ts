@@ -1,4 +1,6 @@
 export {
+  MEDIA_TYPES,
+  MEDIA_STATUSES,
   MediaType,
   MediaStatus,
   MediaItem,

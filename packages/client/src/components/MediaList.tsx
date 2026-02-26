@@ -1,14 +1,6 @@
 import { useState } from "react";
 import { trpc } from "../trpc";
-import type { MediaItem, MediaItemUpdate } from "@media-crm/shared";
-
-const MEDIA_TYPES = ["book", "movie", "tv_show", "game", "podcast"] as const;
-const MEDIA_STATUSES = [
-  "want_to_consume",
-  "in_progress",
-  "completed",
-  "dropped",
-] as const;
+import { MEDIA_TYPES, MEDIA_STATUSES, type MediaItem, type MediaItemUpdate } from "@media-crm/shared";
 
 export function MediaList() {
   const [editingId, setEditingId] = useState<number | null>(null);

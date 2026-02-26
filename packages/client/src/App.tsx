@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { MediaList } from "./components/MediaList";
 import { trpc } from "./trpc";
-import type { MediaItemCreate } from "@media-crm/shared";
-
-const MEDIA_TYPES = ["book", "movie", "tv_show", "game", "podcast"] as const;
-const MEDIA_STATUSES = [
-  "want_to_consume",
-  "in_progress",
-  "completed",
-  "dropped",
-] as const;
+import { MEDIA_TYPES, MEDIA_STATUSES, type MediaItemCreate } from "@media-crm/shared";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -18,7 +10,7 @@ function App() {
     type: "book",
     status: "want_to_consume",
     rating: null,
-    notes: "",
+    notes: null,
   });
 
   const utils = trpc.useUtils();
@@ -31,7 +23,7 @@ function App() {
         type: "book",
         status: "want_to_consume",
         rating: null,
-        notes: "",
+        notes: null,
       });
     },
   });
@@ -155,9 +147,9 @@ function App() {
           <div style={{ marginBottom: 15 }}>
             <label style={{ display: "block", marginBottom: 5 }}>Notes</label>
             <textarea
-              value={formData.notes}
+              value={formData.notes ?? ""}
               onChange={(e) =>
-                setFormData({ ...formData, notes: e.target.value })
+                setFormData({ ...formData, notes: e.target.value || null })
               }
               style={{ width: "100%", padding: 8, fontSize: 16, minHeight: 80 }}
             />

@@ -1,28 +1,19 @@
 import { z } from "zod";
 
-export const MediaType = z.enum([
-  "book",
-  "movie",
-  "tv_show",
-  "game",
-  "podcast",
-]);
+export const MEDIA_TYPES = ["book", "movie", "tv_show", "game", "podcast"] as const;
+export const MediaType = z.enum(MEDIA_TYPES);
 export type MediaType = z.infer<typeof MediaType>;
 
-export const MediaStatus = z.enum([
-  "want_to_consume",
-  "in_progress",
-  "completed",
-  "dropped",
-]);
+export const MEDIA_STATUSES = ["want_to_consume", "in_progress", "completed", "dropped"] as const;
+export const MediaStatus = z.enum(MEDIA_STATUSES);
 export type MediaStatus = z.infer<typeof MediaStatus>;
 
 export const MediaItemBase = z.object({
   title: z.string().min(1, "Title is required"),
   type: MediaType,
   status: MediaStatus,
-  rating: z.number().min(0).max(10).nullable().optional(),
-  notes: z.string().optional(),
+  rating: z.number().min(0).max(10).nullable(),
+  notes: z.string().nullable(),
 });
 
 export const MediaItemCreate = MediaItemBase;
