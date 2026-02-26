@@ -11,6 +11,7 @@ function App() {
     status: "want_to_consume",
     rating: null,
     notes: null,
+    completedAt: null,
   });
 
   const utils = trpc.useUtils();
@@ -24,6 +25,7 @@ function App() {
         status: "want_to_consume",
         rating: null,
         notes: null,
+    completedAt: null,
       });
     },
   });
@@ -138,6 +140,22 @@ function App() {
                 setFormData({
                   ...formData,
                   rating: e.target.value ? parseFloat(e.target.value) : null,
+                })
+              }
+              style={{ width: "100%", padding: 8, fontSize: 16 }}
+            />
+          </div>
+          <div style={{ marginBottom: 15 }}>
+            <label style={{ display: "block", marginBottom: 5 }}>
+              Completed At
+            </label>
+            <input
+              type="text"
+              value={formData.completedAt ?? ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  completedAt: e.target.value ? e.target.value : null,
                 })
               }
               style={{ width: "100%", padding: 8, fontSize: 16 }}

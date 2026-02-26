@@ -31,6 +31,7 @@ export function MediaList() {
       status: item.status,
       rating: item.rating,
       notes: item.notes,
+      completedAt: item.completedAt,
     });
   };
 
@@ -104,6 +105,19 @@ export function MediaList() {
                     </option>
                   ))}
                 </select>
+                <input
+                  type="text"
+                  value={editData.completedAt ?? ""}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      completedAt: e.target.value || null,
+                    })
+                  }
+                  placeholder="Completed At"
+                  style={{ width: 80, padding: 8 }}
+                />
+
                 <input
                   type="number"
                   min="0"
@@ -195,6 +209,10 @@ export function MediaList() {
                     {item.rating !== null && (
                       <span>Rating: {item.rating}/10</span>
                     )}
+                      {item.completedAt !== null && (
+                        <span>Completed on: {item.completedAt}</span>
+                      )}
+
                   </div>
                   {item.notes && (
                     <p style={{ margin: "10px 0 0 0", color: "#555" }}>
