@@ -8,6 +8,13 @@
       "when": 1772031310428,
       "tag": "0000_busy_cannonball",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1772086848870,
+      "tag": "0001_steady_mephistopheles",
+      "breakpoints": true
     }
   ]
 }

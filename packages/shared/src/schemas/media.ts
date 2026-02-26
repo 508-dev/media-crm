@@ -14,6 +14,7 @@ export const MediaItemBase = z.object({
   status: MediaStatus,
   rating: z.number().min(0).max(10).nullable(),
   notes: z.string().nullable(),
+  completedAt: z.string().nullable(),
 });
 
 export const MediaItemCreate = MediaItemBase;

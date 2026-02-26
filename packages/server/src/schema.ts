@@ -13,12 +13,13 @@ export const media = sqliteTable("media", {
   status: text("status", { enum: mediaStatuses }).notNull(),
   rating: real("rating"),
   notes: text("notes"),
-  createdAt: text("created_at")
+  createdAt: text("createdAt")
     .notNull()
     .default(sql`(datetime('now'))`),
-  updatedAt: text("updated_at")
+  updatedAt: text("updatedAt")
     .notNull()
     .default(sql`(datetime('now'))`),
+  completedAt: text("completedAt"),
 });
 
 export type Media = typeof media.$inferSelect;
