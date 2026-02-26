@@ -11,39 +11,43 @@ import {
   getMediaById,
   updateMedia,
 } from "../db";
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 export const mediaRouter = router({
-  list: publicProcedure.input(MediaListFilter.optional()).query(({ input }) => {
-    const rows = getAllMedia(input);
-    return rows;
-  }),
+  list: protectedProcedure
+    .input(MediaListFilter.optional())
+    .query(({ input, ctx }) => {
+      const rows = getAllMedia(ctx.user.id, input);
+      return rows;
+    }),
 
-  getById: publicProcedure.input(z.number()).query(({ input }) => {
-    const row = getMediaById(input);
+  getById: protectedProcedure.input(z.number()).query(({ input, ctx }) => {
+    const row = getMediaById(ctx.user.id, input);
     if (!row) {
       throw new Error("Media item not found");
     }
     return row;
   }),
 
-  create: publicProcedure.input(MediaItemCreate).mutation(({ input }) => {
-    const row = createMedia(input);
-    return row;
-  }),
+  create: protectedProcedure
+    .input(MediaItemCreate)
+    .mutation(({ input, ctx }) => {
+      const row = createMedia(ctx.user.id, input);
+      return row;
+    }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(z.object({ id: z.number(), data: MediaItemUpdate }))
-    .mutation(({ input }) => {
-      const row = updateMedia(input.id, input.data);
+    .mutation(({ input, ctx }) => {
+      const row = updateMedia(ctx.user.id, input.id, input.data);
       if (!row) {
         throw new Error("Media item not found");
       }
       return row;
     }),
 
-  delete: publicProcedure.input(z.number()).mutation(({ input }) => {
-    const row = deleteMedia(input);
+  delete: protectedProcedure.input(z.number()).mutation(({ input, ctx }) => {
+    const row = deleteMedia(ctx.user.id, input);
     if (!row) {
       throw new Error("Media item not found");
     }

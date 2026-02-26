@@ -8,6 +8,17 @@ export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: "/trpc",
+      fetch(url, options) {
+        const sessionId = localStorage.getItem("sessionId");
+        return fetch(url, {
+          ...options,
+          credentials: "include",
+          headers: {
+            ...options?.headers,
+            ...(sessionId ? { Authorization: `Bearer ${sessionId}` } : {}),
+          },
+        });
+      },
     }),
   ],
 });

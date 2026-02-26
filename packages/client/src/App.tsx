@@ -5,6 +5,7 @@ import {
 } from "@media-crm/shared";
 import { useState } from "react";
 import { MediaList } from "./components/MediaList";
+import { useAuth } from "./contexts/AuthContext";
 import { trpc } from "./trpc";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     completedAt: null,
   });
 
+  const { user, logout } = useAuth();
   const utils = trpc.useUtils();
   const createMutation = trpc.media.create.useMutation({
     onSuccess: () => {
@@ -50,20 +52,39 @@ function App() {
         }}
       >
         <h1 style={{ margin: 0 }}>Media CRM</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          style={{
-            padding: "10px 20px",
-            fontSize: 16,
-            cursor: "pointer",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: 4,
-          }}
-        >
-          {showForm ? "Cancel" : "Add Media"}
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+          <span style={{ color: "#666" }}>
+            {user?.displayName || user?.email}
+          </span>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            style={{
+              padding: "10px 20px",
+              fontSize: 16,
+              cursor: "pointer",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: 4,
+            }}
+          >
+            {showForm ? "Cancel" : "Add Media"}
+          </button>
+          <button
+            onClick={() => logout()}
+            style={{
+              padding: "10px 20px",
+              fontSize: 16,
+              cursor: "pointer",
+              backgroundColor: "#dc3545",
+              color: "white",
+              border: "none",
+              borderRadius: 4,
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       {showForm && (

@@ -15,8 +15,11 @@ export const db = drizzle(sqlite);
 // Run migrations
 migrate(db, { migrationsFolder: path.join(__dirname, "..", "drizzle") });
 
-export function getAllMedia(filters?: { type?: string; status?: string }) {
-  const conditions = [];
+export function getAllMedia(
+  userId: number,
+  filters?: { type?: string; status?: string },
+) {
+  const conditions = [eq(media.userId, userId)];
 
   if (filters?.type) {
     conditions.push(
@@ -32,38 +35,50 @@ export function getAllMedia(filters?: { type?: string; status?: string }) {
     );
   }
 
-  if (conditions.length > 0) {
-    return db
-      .select()
-      .from(media)
-      .where(and(...conditions))
-      .orderBy(desc(media.updatedAt))
-      .all();
-  }
-
-  return db.select().from(media).orderBy(desc(media.updatedAt)).all();
+  return db
+    .select()
+    .from(media)
+    .where(and(...conditions))
+    .orderBy(desc(media.updatedAt))
+    .all();
 }
 
-export function getMediaById(id: number) {
-  return db.select().from(media).where(eq(media.id, id)).get();
+export function getMediaById(userId: number, id: number) {
+  return db
+    .select()
+    .from(media)
+    .where(and(eq(media.id, id), eq(media.userId, userId)))
+    .get();
 }
 
-export function createMedia(data: NewMedia) {
-  return db.insert(media).values(data).returning().get();
+export function createMedia(userId: number, data: Omit<NewMedia, "userId">) {
+  return db
+    .insert(media)
+    .values({ ...data, userId })
+    .returning()
+    .get();
 }
 
-export function updateMedia(id: number, data: Partial<Omit<NewMedia, "id">>) {
-  const existing = getMediaById(id);
+export function updateMedia(
+  userId: number,
+  id: number,
+  data: Partial<Omit<NewMedia, "id" | "userId">>,
+) {
+  const existing = getMediaById(userId, id);
   if (!existing) return undefined;
 
   return db
     .update(media)
     .set({ ...data, updatedAt: sql`datetime('now')` })
-    .where(eq(media.id, id))
+    .where(and(eq(media.id, id), eq(media.userId, userId)))
     .returning()
     .get();
 }
 
-export function deleteMedia(id: number) {
-  return db.delete(media).where(eq(media.id, id)).returning().get();
+export function deleteMedia(userId: number, id: number) {
+  return db
+    .delete(media)
+    .where(and(eq(media.id, id), eq(media.userId, userId)))
+    .returning()
+    .get();
 }

@@ -14,3 +14,6 @@ export type {
   MediaType as MediaTypeEnum,
   MediaStatus as MediaStatusEnum,
 } from "./schemas/media";
+
+export { UserSignup, UserLogin, User } from "./schemas/auth";
+export type { User as UserType } from "./schemas/auth";
